@@ -23,9 +23,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Verify `moto` installation
-        run: python -m pip show moto
-
       - name: List installed packages
         run: python -m pip list
 
