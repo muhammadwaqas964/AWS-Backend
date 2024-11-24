@@ -13,7 +13,7 @@ from lambda_function import lambda_handler  # Import using the correct path
 @mock_dynamodb
 def test_lambda_handler():
     # Set up mock DynamoDB
-    dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+    dynamodb = boto3.resource('dynamodb', region_name='us-east-1')  # Specify the region here
     table = dynamodb.create_table(
         TableName='waqasdynamodb',
         KeySchema=[{'AttributeName': 'id', 'KeyType': 'HASH'}],
