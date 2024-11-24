@@ -26,6 +26,9 @@ jobs:
       - name: Verify `moto` installation
         run: python -m pip show moto
 
+      - name: List installed packages
+        run: python -m pip list
+
       - name: Run tests
         run: pytest test
 
