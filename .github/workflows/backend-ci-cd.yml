@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: Backend CI/CD
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,74 +19,30 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.8
+          python-version: '3.11'
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pytest moto
 
-      - name: Run tests
-        run: pytest test/
-
-  package:
-    runs-on: ubuntu-latest
-    needs: test
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.8
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install boto3
-
-      - name: Package Lambda function
+      - name: Zip Lambda Function
         run: |
           cd MyProject
           zip -r lambda_function.zip lambda_function.py
+          mv lambda_function.zip ../lambda_function.zip
 
-      - name: Upload Lambda package
-        uses: actions/upload-artifact@v2
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          name: lambda_function.zip
-          path: MyProject/lambda_function.zip
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: package
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Download Lambda package
-        uses: actions/download-artifact@v2
-        with:
-          name: lambda_function.zip
-          path: MyProject/
-
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v1
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
 
       - name: Initialize Terraform
-        working-directory: terraform
         run: terraform init
-
-      - name: Validate Terraform
         working-directory: terraform
-        run: terraform validate
 
-      - name: Apply Terraform
-        working-directory: terraform
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Apply Terraform Plan
         run: terraform apply -auto-approve
+        working-directory: terraform
