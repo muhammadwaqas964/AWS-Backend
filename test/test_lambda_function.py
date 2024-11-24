@@ -5,6 +5,12 @@ from moto import mock_dynamodb
 import sys
 import os
 
+# Mock AWS credentials for moto
+os.environ['AWS_ACCESS_KEY_ID'] = 'testing'
+os.environ['AWS_SECRET_ACCESS_KEY'] = 'testing'
+os.environ['AWS_SECURITY_TOKEN'] = 'testing'
+os.environ['AWS_SESSION_TOKEN'] = 'testing'
+
 # Add the path of the lambda_function module to sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'MyProject')))
 
@@ -13,6 +19,7 @@ from lambda_function import lambda_handler  # Import using the correct path
 @mock_dynamodb
 def test_lambda_handler():
     # Set up mock DynamoDB
+    boto3.setup_default_session(region_name='us-east-1')  # Ensure the region is set correctly
     dynamodb = boto3.resource('dynamodb', region_name='us-east-1')  # Specify the region here
     table = dynamodb.create_table(
         TableName='waqasdynamodb',
