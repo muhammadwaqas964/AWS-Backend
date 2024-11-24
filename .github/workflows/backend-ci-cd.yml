@@ -30,7 +30,7 @@ jobs:
         run: |
           cd MyProject
           zip -r lambda_function.zip lambda_function.py
-          mv lambda_function.zip ../lambda_function.zip  # Move zip file to root directory
+          mv lambda_function.zip ../lambda_function.zip
 
       - name: Set up AWS CLI
         uses: aws-actions/configure-aws-credentials@v1
@@ -46,3 +46,4 @@ jobs:
       - name: Apply Terraform Plan
         run: terraform apply -auto-approve
         working-directory: terraform
+
