@@ -156,17 +156,16 @@ resource "aws_dynamodb_table" "waqasdynamodb" {
   lifecycle {
     prevent_destroy = true
   }
-
-  # Remove ttl block if it's not required
 }
 
-resource "aws_lambda_function" "waqaslambda" {
+resource "aws_lambda_function" "waqaslambda" { 
   function_name = "waqaslambda"
   handler       = "lambda_function.lambda_handler"
   runtime       = "python3.8"
-  role          = "arn:aws:iam::577638354548:role/service-role/waqaslambda-role-s1v2ryix"
-  source_code_hash = "QaqZ/UltWkLjm/qZflqIK7uTQeQOTvBfNOVIbDem3Jc="
-  memory_size       = 128
+  role          = "arn:aws:iam::577638354548:role/service-role/waqaslambda-role-s1v2ryix"  
+  filename      = "lambda_function.zip"  # Reference the zip file created in the pipeline
+  source_code_hash = filebase64sha256("lambda_function.zip")  # Dynamically calculated hash
+  memory_size       = 128  
   timeout           = 3
   package_type      = "Zip"
 
