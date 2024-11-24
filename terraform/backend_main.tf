@@ -2,15 +2,6 @@ provider "aws" {
   region = "us-east-1"
 }
 
-resource "aws_s3_bucket" "waqasdevops" {
-  bucket = "waqasdevops"
-
-  lifecycle {
-    prevent_destroy = true
-    ignore_changes  = [bucket]
-  }
-}
-
 resource "aws_lambda_function" "waqaslambda" {
   function_name = "waqaslambda"
   handler       = "lambda_function.lambda_handler"
@@ -63,10 +54,6 @@ resource "aws_api_gateway_rest_api" "waqas_api" {
     prevent_destroy = true
     ignore_changes  = [api_key_source, endpoint_configuration]
   }
-}
-
-output "s3_bucket_name" {
-  value = aws_s3_bucket.waqasdevops.bucket
 }
 
 output "lambda_function_arn" {
