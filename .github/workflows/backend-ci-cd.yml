@@ -26,6 +26,23 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Verify AWS Credentials
+        run: aws sts get-caller-identity
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: 'us-east-1'
+
+      - name: List files and directories for debugging
+        run: |
+          echo "Listing files and directories..."
+          ls -R
+
+      - name: Display environment variables for debugging
+        run: |
+          echo "Listing environment variables..."
+          printenv
+
       - name: Zip Lambda Function
         run: |
           cd MyProject
@@ -43,6 +60,6 @@ jobs:
         run: terraform init
         working-directory: terraform
 
-      - name: Apply Terraform Plan
-        run: terraform apply -auto-approve
+      - name: Verify Existing Resources with Terraform Plan
+        run: terraform plan -out=terraform_plan
         working-directory: terraform
