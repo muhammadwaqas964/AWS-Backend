@@ -36,7 +36,7 @@ jobs:
       - name: Run tests
         env:
           AWS_DEFAULT_REGION: 'us-east-1'
-        run: pytest test
+        run: pytest /test test_lambda_function.py
 
       - name: Zip Lambda Function
         run: |
